@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class InputDataFieldItem extends Container {
   final String title;
-  // final String value;
   final String unit;
   final TextField _textField;
 

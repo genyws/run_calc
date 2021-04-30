@@ -32,143 +32,146 @@ class _RunCalcHomeState extends State<RunCalcHome> {
           },
         ));
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text('Running Calculator'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(height: 3),
-          Row(
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              DataFieldItem('SPEED',
-                  providerListen.getSpeed().toStringAsFixed(1), ' km/h'),
-              DataFieldItem('PACE',
-                  convertSpeedToPace(providerListen.getSpeed()), '/ km'),
-            ],
-          ),
-          Slider(
-            min: 5,
-            max: 25,
-            divisions: 200,
-            value: providerNotListen.getSpeed(),
-            onChanged: (double newValue) {
-              setState(() {
-                providerNotListen.setSpeed(newValue);
-              });
-            },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              DataFieldItem('Cadence',
-                  providerListen.getCadence().toInt().toString(), ' steps'),
-              DataFieldItem(
-                  'Stride',
-                  measureStrideBySpeedAndCadence(
-                      providerListen.getSpeed(), providerListen.getCadence()),
-                  ' meter'),
-            ],
-          ),
-          Slider(
-            min: 100,
-            max: 250,
-            divisions: 150,
-            value: providerNotListen.getCadence(),
-            onChanged: (double newValue) {
-              setState(() {
-                Provider.of<RunningData>(context, listen: false)
-                    .setCadence(newValue);
-              });
-            },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              weightField,
-              DataFieldItem(
-                  'Power',
-                  measurePowerBySpeedWeight(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  DataFieldItem('SPEED',
+                      providerListen.getSpeed().toStringAsFixed(1), ' km/h'),
+                  DataFieldItem('PACE',
+                      convertSpeedToPace(providerListen.getSpeed()), '/ km'),
+                ],
+              ),
+              Slider(
+                min: 5,
+                max: 25,
+                divisions: 200,
+                value: providerNotListen.getSpeed(),
+                onChanged: (double newValue) {
+                  setState(() {
+                    providerNotListen.setSpeed(newValue);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  DataFieldItem('Cadence',
+                      providerListen.getCadence().toInt().toString(), ' steps'),
+                  DataFieldItem(
+                      'Stride',
+                      measureStrideBySpeedAndCadence(providerListen.getSpeed(),
+                          providerListen.getCadence()),
+                      ' meter'),
+                ],
+              ),
+              Slider(
+                min: 100,
+                max: 250,
+                divisions: 150,
+                value: providerNotListen.getCadence(),
+                onChanged: (double newValue) {
+                  setState(() {
+                    Provider.of<RunningData>(context, listen: false)
+                        .setCadence(newValue);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  weightField,
+                  DataFieldItem(
+                      'Power',
+                      measurePowerBySpeedWeight(
+                          Provider.of<RunningData>(context, listen: true)
+                              .getSpeed(),
+                          Provider.of<RunningData>(context, listen: true)
+                              .getWeight()),
+                      ' Watts'),
+                  DataFieldItem(
+                      'FTP',
                       Provider.of<RunningData>(context, listen: true)
-                          .getSpeed(),
-                      Provider.of<RunningData>(context, listen: true)
-                          .getWeight()),
-                  ' Watts'),
-              DataFieldItem(
-                  'FTP',
-                  Provider.of<RunningData>(context, listen: true)
-                      .getFTP()
-                      .toStringAsFixed(1),
-                  ' W/kg'),
+                          .getFTP()
+                          .toStringAsFixed(1),
+                      ' W/kg'),
+                ],
+              ),
+              Slider(
+                min: 0.1,
+                max: 10.0,
+                value: providerNotListen.getFTP(),
+                onChanged: (double newValue) {
+                  print('ftp slide changed $newValue');
+                  setState(() {
+                    Provider.of<RunningData>(context, listen: false)
+                        .setFTP(newValue);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  DataFieldItem('Distance',
+                      providerListen.getDistance().toInt().toString(), 'meter'),
+                  DataFieldItem(
+                      'Time(sec)',
+                      getSecondsPerDistance(providerNotListen.getSpeed(),
+                          providerNotListen.getDistance()),
+                      ' sec'),
+                  DataFieldItem(
+                      'Steps',
+                      calculateSteps(
+                          providerNotListen.getSpeed(),
+                          providerNotListen.getCadence(),
+                          providerNotListen.getDistance()),
+                      ' steps'),
+                ],
+              ),
+              Slider(
+                min: 0,
+                max: 10,
+                divisions: 10,
+                value: providerNotListen.getDistIndex() as double,
+                onChanged: (double newValue) {
+                  print('distance slide changed $newValue');
+                  setState(() {
+                    Provider.of<RunningData>(context, listen: false)
+                        .setDistIndex(newValue);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  PaceItem(
+                      '1Km', calcTimeDistance(providerListen.getSpeed(), 1)),
+                  PaceItem(
+                      '3Km', calcTimeDistance(providerListen.getSpeed(), 3)),
+                  PaceItem(
+                      '5Km', calcTimeDistance(providerListen.getSpeed(), 5)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  PaceItem(
+                      '10Km', calcTimeDistance(providerListen.getSpeed(), 10)),
+                  PaceItem(
+                      '20Km', calcTimeDistance(providerListen.getSpeed(), 20)),
+                  PaceItem('Full',
+                      calcTimeDistance(providerListen.getSpeed(), 42.195)),
+                ],
+              )
             ],
           ),
-          Slider(
-            min: 0.1,
-            max: 10.0,
-            value: providerNotListen.getFTP(),
-            onChanged: (double newValue) {
-              print('ftp slide changed $newValue');
-              setState(() {
-                Provider.of<RunningData>(context, listen: false)
-                    .setFTP(newValue);
-              });
-            },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              DataFieldItem('Distance',
-                  providerListen.getDistance().toInt().toString(), 'meter'),
-              DataFieldItem(
-                  'Time(sec)',
-                  getSecondsPerDistance(providerNotListen.getSpeed(),
-                      providerNotListen.getDistance()),
-                  ' sec'),
-              DataFieldItem(
-                  'Steps',
-                  calculateSteps(
-                      providerNotListen.getSpeed(),
-                      providerNotListen.getCadence(),
-                      providerNotListen.getDistance()),
-                  ' steps'),
-            ],
-          ),
-          Slider(
-            min: 0,
-            max: 10,
-            divisions: 10,
-            value: providerNotListen.getDistIndex() as double,
-            onChanged: (double newValue) {
-              print('distance slide changed $newValue');
-              setState(() {
-                Provider.of<RunningData>(context, listen: false)
-                    .setDistIndex(newValue);
-              });
-            },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              PaceItem('1Km', calcTimeDistance(providerListen.getSpeed(), 1)),
-              PaceItem('3Km', calcTimeDistance(providerListen.getSpeed(), 3)),
-              PaceItem('5Km', calcTimeDistance(providerListen.getSpeed(), 5)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              PaceItem('10Km', calcTimeDistance(providerListen.getSpeed(), 10)),
-              PaceItem('20Km', calcTimeDistance(providerListen.getSpeed(), 20)),
-              PaceItem(
-                  'Full', calcTimeDistance(providerListen.getSpeed(), 42.195)),
-            ],
-          )
-        ],
-      ),
-    );
+        ));
   }
 
   String convertSpeedToPace(double speed) {

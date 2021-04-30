@@ -39,9 +39,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- ios build error
 	<array>
     	<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	-->
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
